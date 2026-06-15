@@ -1,37 +1,52 @@
 require 'rails_helper'
 
-RSpec.describe "Campaigns", type: :request do
-  describe "POST /campaigns" do
-    let(:valid_params) do
+RSpec.describe 'Campaigns', type: :request do
+  describe 'POST /campaigns' do
+    let(:title) { 'Test Campaign' }
+    let(:recipients_attributes) do
+      [
+        { name: 'John Doe', email: 'john@example.com' },
+        { name: 'Jane Smith', email: 'jane@example.com' }
+      ]
+    end
+
+    let(:params) do
       {
         campaign: {
-          title: "Test Campaign",
-          recipients_attributes: [
-            { name: "John Doe", email: "john@example.com" },
-            { name: "Jane Smith", email: "jane@example.com" }
-          ]
+          title:,
+          recipients_attributes:
         }
       }
     end
 
-    subject { post campaigns_path, params: valid_params }
+    subject { post(campaigns_path, params:) }
 
-    it "creates a new Campaign" do
-      expect { subject }.to change(Campaign, :count).by(1)
+    context 'when params are valid' do
+      it 'creates a new Campaign' do
+        expect { subject }.to change(Campaign, :count).by(1)
+      end
+
+      it 'creates recipients from nested attributes' do
+        expect { subject }.to change(Recipient, :count).by(2)
+      end
+
+      it 'enqueues DispatchCampaignJob' do
+        ActiveJob::Base.queue_adapter = :test
+        expect { subject }.to enqueue_job(DispatchCampaignJob)
+      end
+
+      it 'redirects to the created campaign' do
+        subject
+        expect(response).to redirect_to(Campaign.last)
+      end
     end
 
-    it "creates recipients from nested attributes" do
-      expect { subject }.to change(Recipient, :count).by(2)
-    end
+    context 'when params are invalid' do
+      let(:title) { '' }
 
-    it "enqueues DispatchCampaignJob" do
-      ActiveJob::Base.queue_adapter = :test
-      expect { subject }.to enqueue_job(DispatchCampaignJob)
-    end
-
-    it "redirects to the created campaign" do
-      subject
-      expect(response).to redirect_to(Campaign.last)
+      it 'does not create a Campaign' do
+        expect { subject }.not_to change(Campaign, :count)
+      end
     end
   end
 end

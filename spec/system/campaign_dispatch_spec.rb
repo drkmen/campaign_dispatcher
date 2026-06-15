@@ -3,6 +3,9 @@ require 'rails_helper'
 RSpec.describe "Campaign Dispatch", type: :system do
   include ActiveJob::TestHelper
 
+  let!(:campaign) { create(:campaign, title: 'Reactive Test Campaign') }
+  let!(:recipient) { create(:recipient, campaign:, name: 'Test User', email: "test@example.com") }
+
   before do
     driven_by(:cuprite, options: {
       js_errors: true,
@@ -13,9 +16,6 @@ RSpec.describe "Campaign Dispatch", type: :system do
   end
 
   it "updates recipient status and progress in real-time", js: true do
-    campaign = Campaign.create!(title: "Reactive Test Campaign")
-    recipient = campaign.recipients.create!(name: "Test User", email: "test@example.com")
-
     visit campaign_path(campaign)
 
     expect(page).to have_content("Reactive Test Campaign")
@@ -25,7 +25,6 @@ RSpec.describe "Campaign Dispatch", type: :system do
     # Manually trigger the broadcast to simulate background job update
     # Since we're in a test, we want to ensure Turbo Streams are working
     recipient.sent!
-    # campaign.processing! # Recipient.sent! should now trigger progress update too
 
     expect(page).to have_content("Pending") # Campaign status should still be pending if we only updated recipient
     expect(page).to have_content("Sent 1 of 1")
@@ -33,7 +32,7 @@ RSpec.describe "Campaign Dispatch", type: :system do
 
     campaign.processing!
     expect(page).to have_content("Processing")
-    
+
     campaign.completed!
     expect(page).to have_content("Completed")
   end
