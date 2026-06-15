@@ -303,6 +303,8 @@ GEM
       rubocop-rails (>= 2.30)
     ruby-progressbar (1.13.0)
     securerandom (0.4.1)
+    shoulda-matchers (8.0.1)
+      activesupport (>= 7.2)
     sidekiq (8.1.6)
       connection_pool (>= 3.0.0)
       json (>= 2.16.0)
@@ -394,6 +396,7 @@ DEPENDENCIES
   redis
   rspec-rails
   rubocop-rails-omakase
+  shoulda-matchers
   sidekiq
   solid_cable
   solid_cache
