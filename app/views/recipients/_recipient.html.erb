@@ -1,0 +1,13 @@
+<tr id="<%= dom_id(recipient) %>">
+  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+    <%= recipient.name %>
+  </td>
+  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+    <%= recipient.email %>
+  </td>
+  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <%= status_badge_class(recipient.status) %>">
+      <%= recipient.status.titleize %>
+    </span>
+  </td>
+</tr>
