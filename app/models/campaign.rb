@@ -6,10 +6,12 @@ class Campaign < ApplicationRecord
 
   validates :title, presence: true
 
-  after_update_commit -> {
+  after_commit :broadcast_progress, on: %i[update create]
+
+  def broadcast_progress
     broadcast_replace_to "campaign_#{id}_status",
                          target: "campaign_progress",
                          partial: "campaigns/progress",
-                         locals: { campaign: self }
-  }
+                         locals: { campaign: self.reload }
+  end
 end
