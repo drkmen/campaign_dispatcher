@@ -3,11 +3,10 @@ Make sure you have Ruby 3.4.6, PostgreSQL and Redis installed and running.
 
 Run the following commands to setup the application:
 ```bash
-export PG_USERNAME=your_postgres_username
-export PG_PASSWORD=your_postgres_password
-# or change database.yml
-
 bundle install
+
+# create a database.yml file and update your database credentials
+cp config/database.yml.example config/database.yml
 
 rails db:create db:migrate
 
