@@ -1,5 +1,6 @@
 class Campaign < ApplicationRecord
   has_many :recipients, dependent: :destroy
+  accepts_nested_attributes_for :recipients, allow_destroy: true, reject_if: :all_blank
 
   enum :status, { pending: 0, processing: 1, completed: 2 }, default: :pending
 

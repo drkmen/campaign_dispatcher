@@ -29,12 +29,24 @@
       </div>
     </div>
 
-    <div>
-      <label for="recipients_data" class="block text-sm font-medium text-gray-700">Recipients (Name, Email per line)</label>
-      <div class="mt-1">
-        <%= text_area_tag :recipients_data, params[:recipients_data], rows: 10, class: "shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md", placeholder: "John Doe, john@example.com\nJane Smith, jane@example.com" %>
+    <div data-controller="nested-form">
+      <template data-nested-form-target="template">
+        <%= f.fields_for :recipients, Recipient.new, child_index: "NEW_RECORD" do |recipient_f| %>
+          <%= render "recipient_fields", f: recipient_f %>
+        <% end %>
+      </template>
+
+      <h2 class="text-lg font-medium text-gray-900 mb-4">Recipients</h2>
+      
+      <div data-nested-form-target="container">
+        <%= f.fields_for :recipients do |recipient_f| %>
+          <%= render "recipient_fields", f: recipient_f %>
+        <% end %>
       </div>
-      <p class="mt-2 text-sm text-gray-500">Format: Name, Email. One recipient per line.</p>
+
+      <button type="button" data-action="click->nested-form#add" class="mt-2 inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+        Add Recipient
+      </button>
     </div>
 
     <div class="flex justify-end space-x-3">

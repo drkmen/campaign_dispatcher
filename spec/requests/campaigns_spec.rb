@@ -4,8 +4,13 @@ RSpec.describe "Campaigns", type: :request do
   describe "POST /campaigns" do
     let(:valid_params) do
       {
-        campaign: { title: "Test Campaign" },
-        recipients_data: "John Doe, john@example.com\nJane Smith, jane@example.com"
+        campaign: {
+          title: "Test Campaign",
+          recipients_attributes: [
+            { name: "John Doe", email: "john@example.com" },
+            { name: "Jane Smith", email: "jane@example.com" }
+          ]
+        }
       }
     end
 
@@ -15,7 +20,7 @@ RSpec.describe "Campaigns", type: :request do
       expect { subject }.to change(Campaign, :count).by(1)
     end
 
-    it "creates recipients from batch data" do
+    it "creates recipients from nested attributes" do
       expect { subject }.to change(Recipient, :count).by(2)
     end
 
